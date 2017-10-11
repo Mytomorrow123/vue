@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>get请求</title>
+    <title>百度搜索-vue</title>
     <style>
         *{
             margin: 0;
@@ -27,7 +27,6 @@
             height: 30px;
             line-height: 30px;
         }
-
         .color{
             background-color: #eee;
         }
@@ -35,9 +34,11 @@
 </head>
 <body>
 <div class="search">
-    <input type="text"  class="input" v-model="text" @keyup="search($event)" @keydown.down="down()" @keydown.up.prevent="up()"/>
+    <input type="text"  class="input" v-model="text" @keyup="search($event)"
+           @keydown.down="down()" @keydown.up.prevent="up()"/>
+    <!--down:下键,up:上键,prevent阻止默认事件-->
     <ul>
-        <li v-for="item in arr" v-text="item" :class="{color:$index==now}"></li>
+        <li v-for="item in arr" v-text="item" :class="{color:$index==index}"></li>
     </ul>
     <p v-show="arr.length===0">暂无数据。。。</p>
 </div>
@@ -45,56 +46,52 @@
 <script src="https://cdn.bootcss.com/vue/1.0.15/vue.js"></script>
 <script src="https://cdn.bootcss.com/vue-resource/1.3.2/vue-resource.js"></script>
 <script>
-
-
     window.onload=function(){
-
        new Vue({
            el:'.search',
            data:{
-               arr:'',
+               arr:[],
                text:'',
-               now:-1
+               index:-1
            },
            methods:{
-               search:function(ev){
-                   console.log(ev.keyCode);
-                   if(ev.keyCode==38 || ev.keyCode==40)return;
-                   if(ev.keyCode==13){
+               search:function(e){
+//                   38:方向上键,40:方向下键,13:回车
+                   if(e.keyCode==38 || e.keyCode==40)return;
+                   if(e.keyCode==13){
+//                       open() 方法用于打开一个新的浏览器窗口或查找一个已命名的窗口。
                        window.open('https://www.baidu.com/s?wd='+this.text);
                        this.text='';
-//                       https://www.baidu.com/s?wd=s
                    }
-
                     this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd='+this.text,{
                         jsonp:'cb'
                     }).then(function(res){
+//                        请求成功执行
                         this.arr=res.data.s;
                     },function(res){
+//                        请求失败执行
                         alert(1);
                     });
-
-
+                   this.index=-1;
                 },
+//               按方向下键执行
                down:function(){
-                   this.now++;
-                   if(this.now==this.arr.length){
-                       this.now=0;
+                   this.index++;
+                   if(this.index==this.arr.length){
+                       this.index=0;
                    }
-                   this.text=this.arr[this.now];
+                   this.text=this.arr[this.index];
                },
+//               按方向上键执行
                up:function(){
-                   this.now--;
-                   if(this.now<0){
-                       this.now=this.arr.length-1;
+                   this.index--;
+                   if(this.index<0){
+                       this.index=this.arr.length-1;
                    }
-                   this.text=this.arr[this.now];
+                   this.text=this.arr[this.index];
                }
            }
        });
-
     };
-
-
 </script>
 </html>
