@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>get请求</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .search{
+            width: 400px;
+            margin: 50px auto;
+        }
+        .input{
+            width: 400px;
+            height: 40px;
+            font-size: 20px;
+            text-indent: 10px;
+        }
+        ul{
+            margin-top: 20px;
+            list-style: none;
+        }
+        ul>li{
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .color{
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+<div class="search">
+    <input type="text"  class="input" v-model="text" @keyup="search($event)" @keydown.down="down()" @keydown.up.prevent="up()"/>
+    <ul>
+        <li v-for="item in arr" v-text="item" :class="{color:$index==now}"></li>
+    </ul>
+    <p v-show="arr.length===0">暂无数据。。。</p>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/vue/1.0.15/vue.js"></script>
+<script src="https://cdn.bootcss.com/vue-resource/1.3.2/vue-resource.js"></script>
+<script>
+
+
+    window.onload=function(){
+
+       new Vue({
+           el:'.search',
+           data:{
+               arr:'',
+               text:'',
+               now:-1
+           },
+           methods:{
+               search:function(ev){
+                   console.log(ev.keyCode);
+                   if(ev.keyCode==38 || ev.keyCode==40)return;
+                   if(ev.keyCode==13){
+                       window.open('https://www.baidu.com/s?wd='+this.text);
+                       this.text='';
+//                       https://www.baidu.com/s?wd=s
+                   }
+
+                    this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd='+this.text,{
+                        jsonp:'cb'
+                    }).then(function(res){
+                        this.arr=res.data.s;
+                    },function(res){
+                        alert(1);
+                    });
+
+
+                },
+               down:function(){
+                   this.now++;
+                   if(this.now==this.arr.length){
+                       this.now=0;
+                   }
+                   this.text=this.arr[this.now];
+               },
+               up:function(){
+                   this.now--;
+                   if(this.now<0){
+                       this.now=this.arr.length-1;
+                   }
+                   this.text=this.arr[this.now];
+               }
+           }
+       });
+
+    };
+
+
+</script>
+</html>
