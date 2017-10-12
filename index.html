@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@
             padding: 0;
         }
         .search{
-            width: 400px;
+            width: 500px;
             margin: 50px auto;
         }
         .input{
@@ -63,8 +63,14 @@
                        window.open('https://www.baidu.com/s?wd='+this.text);
                        this.text='';
                    }
-                    this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd='+this.text,{
+                   
+                    this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?',{
+                        params:{
+                            wd:this.text
+                        },
                         jsonp:'cb'
+                    },{
+                        emulateJSON:true
                     }).then(function(res){
 //                        请求成功执行
                         this.arr=res.data.s;
@@ -74,6 +80,7 @@
                     });
                    this.index=-1;
                 },
+               
 //               按方向下键执行
                down:function(){
                    this.index++;
@@ -82,6 +89,7 @@
                    }
                    this.text=this.arr[this.index];
                },
+               
 //               按方向上键执行
                up:function(){
                    this.index--;
